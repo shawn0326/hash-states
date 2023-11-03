@@ -1,0 +1,23 @@
+{
+  "name": "hash-states",
+  "version": "0.0.1",
+  "description": "High-performance collection of states for easy generation of hash strings.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "prettier": "prettier . --write",
+    "benchmark": "node benchmark.cjs",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "hash",
+    "hashmap",
+    "states"
+  ],
+  "author": "shawn0326",
+  "license": "MIT",
+  "devDependencies": {
+    "benchmark": "^2.1.4",
+    "prettier": "^3.0.3"
+  }
+}
