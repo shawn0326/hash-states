@@ -18,6 +18,7 @@ for (let i = 0; i < 100; i++) {
 
   const hashStates = new HashStates();
   let object = {};
+  const map = new Map();
 
   let hash1Count = 0,
     hash2Count = 0;
@@ -78,6 +79,12 @@ for (let i = 0; i < 100; i++) {
     .add("object", () => {
       setObjectValues();
     })
+    .add("_map__", () => {
+      map.clear();
+      stringData.forEach(([key, value]) => map.set(key, value));
+      numberData.forEach(([key, value]) => map.set(key, value));
+      booleanData.forEach(([key, value]) => map.set(key, value));
+    })
     .on("cycle", function (event) {
       console.log(String(event.target));
     })
@@ -93,6 +100,12 @@ for (let i = 0; i < 100; i++) {
     .add("object", () => {
       setObjectValues();
     })
+    .add("_map__", () => {
+      map.clear();
+      stringData.forEach(([key, value]) => map.set(key, value));
+      numberData.forEach(([key, value]) => map.set(key, value));
+      booleanData.forEach(([key, value]) => map.set(key, value));
+    })
     .on("cycle", function (event) {
       console.log(String(event.target));
     })
@@ -107,6 +120,13 @@ for (let i = 0; i < 100; i++) {
     })
     .add("object", () => {
       getObjectHash();
+    })
+    .add("_map__", () => {
+      let array = [];
+      for (const value of map.values()) {
+        array.push(value);
+      }
+      const hash = array.join("_");
     })
     .on("cycle", function (event) {
       console.log(String(event.target));
@@ -125,6 +145,11 @@ for (let i = 0; i < 100; i++) {
     .add("object", () => {
       getObjectValues();
     })
+    .add("_map__", () => {
+      stringData.forEach(([key]) => map.get(key));
+      numberData.forEach(([key]) => map.get(key));
+      booleanData.forEach(([key]) => map.get(key));
+    })
     .on("cycle", function (event) {
       console.log(String(event.target));
     })
@@ -135,7 +160,7 @@ for (let i = 0; i < 100; i++) {
 
   new Benchmark.Suite("all")
     .add("states", () => {
-      setStatesValues(false);
+      setStatesValues();
       getStatesHash();
       getStatesValues();
     })
@@ -143,6 +168,20 @@ for (let i = 0; i < 100; i++) {
       setObjectValues();
       getObjectHash();
       getObjectValues();
+    })
+    .add("_map__", () => {
+      map.clear();
+      stringData.forEach(([key, value]) => map.set(key, value));
+      numberData.forEach(([key, value]) => map.set(key, value));
+      booleanData.forEach(([key, value]) => map.set(key, value));
+      let array = [];
+      for (const value of map.values()) {
+        array.push(value);
+      }
+      const hash = array.join("_");
+      stringData.forEach(([key]) => map.get(key));
+      numberData.forEach(([key]) => map.get(key));
+      booleanData.forEach(([key]) => map.get(key));
     })
     .on("cycle", function (event) {
       console.log(String(event.target));
