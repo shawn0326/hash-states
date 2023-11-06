@@ -1,6 +1,6 @@
 {
   "name": "hash-states",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "High-performance collection of states for easy generation of hash strings.",
   "type": "module",
   "main": "index.js",
