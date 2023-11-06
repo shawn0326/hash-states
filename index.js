@@ -4,110 +4,74 @@
  */
 export default class HashStates {
   constructor() {
-    this._stringStates = new StringHashStates();
-    this._numberStates = new NumberHashStates();
-    this._booleanStates = new BooleanHashStates();
+    this._stringMap = new Map();
+    this._numberMap = new Map();
+    this._booleanMap = new Map();
   }
 
-  setString(name, value, check) {
-    this._stringStates.setValue(name, value, check);
+  setString(name, value) {
+    this._stringMap.set(name, value);
     return this;
   }
 
-  setNumber(name, value, check) {
-    this._numberStates.setValue(name, value, check);
+  setNumber(name, value) {
+    this._numberMap.set(name, value);
     return this;
   }
 
-  setBoolean(name, value, check) {
-    this._booleanStates.setValue(name, value, check);
+  setBoolean(name, value) {
+    this._booleanMap.set(name, value);
     return this;
   }
 
   getString(name) {
-    return this._stringStates.getValue(name);
+    return this._stringMap.get(name);
   }
 
   getNumber(name) {
-    return this._numberStates.getValue(name);
+    return this._numberMap.get(name);
   }
 
   getBoolean(name) {
-    return this._booleanStates.getValue(name);
+    return this._booleanMap.get(name);
   }
 
   getHash() {
     return [
-      this._stringStates.getHash(),
-      this._numberStates.getHash(),
-      this._booleanStates.getHash(),
+      Array.from(this._stringMap.values()).join("_"),
+      // todo: implement a more efficient number hash?
+      Array.from(this._numberMap.values()).join("_"),
+      getBooleanMaskHash(this._booleanMap),
     ].join("|");
   }
 
   clear() {
-    this._stringStates.clear();
-    this._numberStates.clear();
-    this._booleanStates.clear();
+    this._stringMap.clear();
+    this._numberMap.clear();
+    this._booleanMap.clear();
     return this;
   }
 }
 
-/**
- * Abstract class for string/number/boolean hash states
- */
-class TypedHashStates {
-  constructor() {
-    this._values = [];
-    this._names = [];
-  }
-
-  setValue(name, value, check = true) {
-    if (check) {
-      const index = this._names.indexOf(name);
-      if (index >= 0) {
-        this._values[index] = value;
-        return;
-      }
+// compress boolean values into a single number
+// todo: more than 32 booleans
+function getBooleanMaskHash(map) {
+  let masks = [],
+    mask = 0,
+    index = 0;
+  map.forEach((value) => {
+    if (value) {
+      mask |= 1 << index;
     }
-
-    this._names.push(name);
-    this._values.push(value);
-  }
-
-  getValue(name) {
-    // todo: get value is slow, need to optimize
-    const index = this._names.indexOf(name);
-    if (index >= 0) {
-      return this._values[index];
+    index++;
+    if (index === 31) {
+      masks.push(mask);
+      mask = 0;
+      index = 0;
     }
-    return undefined;
+  });
+  if (index > 0) {
+    masks.push(mask);
   }
-
-  getHash() {
-    return this._values.join("_");
-  }
-
-  clear() {
-    this._values = [];
-    this._names = [];
-  }
-}
-
-class StringHashStates extends TypedHashStates {}
-
-// todo: implement a more efficient number hash?
-class NumberHashStates extends TypedHashStates {}
-
-class BooleanHashStates extends TypedHashStates {
-  getHash() {
-    // compress boolean values into a single number
-    // todo: more than 32 booleans
-    let mask = 0;
-    for (let i = 0; i < this._values.length; i++) {
-      if (this._values[i]) {
-        mask |= 1 << i;
-      }
-    }
-    return mask;
-  }
+  return masks.join("_");
 }

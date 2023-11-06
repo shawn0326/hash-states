@@ -17,7 +17,7 @@ console.log(states.getBoolean("awesome")); // true
 
 states.clear();
 
-for (let i = 0; i < 31; i++) {
+for (let i = 0; i < 35; i++) {
   states.setBoolean(`boolean${i}`, i % 2 === 0);
 }
 
