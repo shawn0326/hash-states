@@ -54,7 +54,6 @@ export default class HashStates {
 }
 
 // compress boolean values into a single number
-// todo: more than 32 booleans
 function getBooleanMaskHash(map) {
   let masks = [],
     mask = 0,
